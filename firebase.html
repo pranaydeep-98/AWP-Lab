@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <form action="">
+            <label for="name">Enter Student Name:</label>
+            <input id="name" type="text">
+            <br>
+            <br>
+            <label for="roll">Enter Student Roll Number:</label>
+            <input id="roll" type="text">
+            <br>
+            <br>
+            <label for="branch">Enter Student Branch:</label>
+            <input id="branch" type="text">
+            <br>
+            <br>
+            <label for="year">Enter Student Year:</label>
+            <input id="year" type="text">
+            <br>
+            <br>
+            <label for="cgpa">Enter Student CGPA:</label>
+            <input id="cgpa" type="text">
+            <br>
+            <br>
+            <div>
+                <input type="button" id="b1" name="insert" value="INSERT">
+                <input type="button" id="b2" name="delete" value="DELETE">
+                <input type="button" id="b3" name="update" value="UPDATE">
+                <input type="button" id="b4" name="display" value="DISPLAY">
+            </div>
+            <p id="displaying"></p>
+        </form> 
+
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+              // Firebase imports
+                import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+                import { getDatabase, set, ref, update, remove, child, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+            apiKey: "AIzaSyDfOaJz6K4KmGj1rjQU_APlQ0fIqCfBy-4",
+            authDomain: "studentmanagementsystem-cadba.firebaseapp.com",
+            projectId: "studentmanagementsystem-cadba",
+            storageBucket: "studentmanagementsystem-cadba.firebasestorage.app",
+            messagingSenderId: "472224205434",
+            appId: "1:472224205434:web:dfbfe83dc864c1d8ba89c3",
+            measurementId: "G-4DGMFKFM6D"
+            };
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    // Button Event Listeners
+    document.getElementById("b1").addEventListener("click", insertData);
+    document.getElementById("b2").addEventListener("click", deleteData);
+    document.getElementById("b3").addEventListener("click", updateData);
+    document.getElementById("b4").addEventListener("click", displayData);
+
+    // Functions
+
+    function insertData() {
+    document.getElementById("displaying").innerText = "";
+
+      const name = document.getElementById("name").value;
+      const roll = document.getElementById("roll").value;
+      const branch = document.getElementById("branch").value;
+      const year = document.getElementById("year").value;
+      const cgpa = document.getElementById("cgpa").value;
+
+      set(ref(db, 'students/' + roll), {
+        name: name,
+        roll: roll,
+        branch: branch,
+        year: year,
+        cgpa: cgpa
+      }).then(() => {
+        alert("Data Inserted Successfully");
+      }).catch((error) => {
+        alert("Error: " + error.message);
+      });
+    }
+
+    function deleteData() {
+      const roll = document.getElementById("roll").value;
+
+      remove(ref(db, 'students/' + roll)).then(() => {
+        alert("Data Deleted Successfully");
+      }).catch((error) => {
+        alert("Error: " + error.message);
+      });
+    }
+
+    function updateData() {
+    document.getElementById("displaying").innerText = "";
+
+      const name = document.getElementById("name").value;
+      const roll = document.getElementById("roll").value;
+      const branch = document.getElementById("branch").value;
+      const year = document.getElementById("year").value;
+      const cgpa = document.getElementById("cgpa").value;
+
+      update(ref(db, 'students/' + roll), {
+        name: name,
+        branch: branch,
+        year: year,
+        cgpa: cgpa
+      }).then(() => {
+        alert("Data Updated Successfully");
+      }).catch((error) => {
+        alert("Error: " + error.message);
+      });
+    }
+
+    function displayData() {
+    document.getElementById("displaying").innerText = "";
+
+      const roll = document.getElementById("roll").value;
+
+      get(child(ref(db), 'students/' + roll)).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("name").value = data.name;
+          document.getElementById("branch").value = data.branch;
+          document.getElementById("year").value = data.year;
+          document.getElementById("cgpa").value = data.cgpa;
+            alert("Data Retrieved Successfully");
+            document.getElementById("displaying").innerText = 
+              `Name: ${data.name}, Roll: ${data.roll}, Branch: ${data.branch}, Year: ${data.year}, CGPA: ${data.cgpa}`;
+        
+        } else {
+          alert("No data found for this Roll Number.");
+           document.getElementById("displaying").innerText = "";
+        }
+      }).catch((error) => {
+        alert("Error: " + error.message);
+         document.getElementById("displaying").innerText = "";
+      });
+    }
+
+  </script>
+</body>
+</html>
